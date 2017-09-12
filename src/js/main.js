@@ -82,36 +82,35 @@ class Main {
                 return;
             }
             $.ajax({
-                url: '/api/mnist',
+                url: 'http://localhost:8000/',
                 method: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify(inputs),
+                data: JSON.stringify({"img":inputs}),
                 success: (data) => {
-                    for (let i = 0; i < 2; i++) {
-                        var max = 0;
-                        var max_index = 0;
-                        for (let j = 0; j < 10; j++) {
-                            var value = Math.round(data.results[i][j] * 1000);
-                            if (value > max) {
-                                max = value;
-                                max_index = j;
-                            }
-                            var digits = String(value).length;
-                            for (var k = 0; k < 3 - digits; k++) {
-                                value = '0' + value;
-                            }
-                            var text = '0.' + value;
-                            if (value > 999) {
-                                text = '1.000';
-                            }
-                            $('#output tr').eq(j + 1).find('td').eq(i).text(text);
+		    data = data["data"][0]
+                    var max = 0;
+                    var max_index = 0;
+                    for (let j = 0; j < 10; j++) {
+                        var value = Math.round(data[j] * 1000);
+                        if (value > max) {
+                            max = value;
+                            max_index = j;
                         }
-                        for (let j = 0; j < 10; j++) {
-                            if (j === max_index) {
-                                $('#output tr').eq(j + 1).find('td').eq(i).addClass('success');
-                            } else {
-                                $('#output tr').eq(j + 1).find('td').eq(i).removeClass('success');
-                            }
+                        var digits = String(value).length;
+                        for (var k = 0; k < 3 - digits; k++) {
+                            value = '0' + value;
+                        }
+                        var text = '0.' + value;
+                        if (value > 999) {
+                            text = '1.000';
+                        }
+                        $('#output tr').eq(j + 1).find('td').text(text);
+                    }
+                    for (let j = 0; j < 10; j++) {
+                        if (j === max_index) {
+                            $('#output tr').eq(j + 1).find('td').addClass('success');
+                        } else {
+                            $('#output tr').eq(j + 1).find('td').removeClass('success');
                         }
                     }
                 }
